@@ -1,10 +1,27 @@
-import Home from "./components/Home";
+import React from "react";
+import HomePage from "./components/HomePage";
+import Signup from "./components/signup";
+
+import { ToastContainer } from "react-toastify";
+
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+} from "react-router-dom";
+
 function App() {
-  return (
+  return (<>
     <div className="App">
-      <h1>Employee Birthdays</h1>
-      <Home />
+      <Router>
+        <ToastContainer />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/signUp" element={<Signup />} />
+        </Routes>
+      </Router>
     </div>
+  </>
   );
 }
 
