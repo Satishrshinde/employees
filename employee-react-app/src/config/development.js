@@ -5,5 +5,4 @@ export const API = {
   USERS: `${DOMAIN}/users`
 };
 
-
 // const DOMAIN ="http://localhost:9002"

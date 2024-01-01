@@ -4,7 +4,8 @@ const UserSchema = new Schema({
   username: String,
   email: String,
   password: String,
+  files: [{ filename: String, path: String }]
 });
 
-const UserModel = model('user', UserSchema);
-module.exports = UserModel;
+const User = model('user', UserSchema);
+module.exports = User
