@@ -51,11 +51,11 @@ const Signup = () => {
       };
       const Signup = async () => {
         try {
-          const res = axios.post(API.SIGNUP, signUpData)
+          const res = await axios.post(API.SIGNUP, signUpData)
           toast(res.data.message);
           if (res.data.message === "Signed up successfully") {
             setTimeout(() => {
-              window.location.href = "/Login";
+              window.location.href = "/login";
             }, 1000);
           }
         }
