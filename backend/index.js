@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require('cors');
 const mongoose = require('mongoose');
+const xlsx = require('xlsx');
+const fs = require('fs');
 const multer = require('multer')
 const User = require('./users');
 
@@ -8,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const url = 'mongodb+srv://satishrshinde2014:mz6w8UJ2AjX27ES6@cluster1.8rtxckj.mongodb.net/?retryWrites=true&w=majority'
+const url = 'mongodb+srv://satishrshinde2014:eu5RLFRxRCmaG7Pp@cluster0.204tdqa.mongodb.net/?retryWrites=true&w=majority'
 mongoose.connect(url, {
   useNewUrlParser: true, useUnifiedTopology: true
 
@@ -159,7 +161,7 @@ app.get("/fileUploader/:userId/:fileId", (req, res) => {
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
 
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
 
         // Convert Excel date values to "yyyy-mm-dd" format
         for (let i = 0; i < jsonData.length; i++) {
