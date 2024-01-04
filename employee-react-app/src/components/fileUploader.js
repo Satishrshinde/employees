@@ -26,7 +26,7 @@ const FileUploader = () => {
       .post(API.FILEUPLOADER, formData)
       .then((res) => {
         console.log(res.data);
-        console.log("yesss");
+        console.log("file uploaded");
       })
       .catch((error) => {
         console.error(error);

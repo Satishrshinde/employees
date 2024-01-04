@@ -1,8 +1,10 @@
 const DOMAIN = "http://localhost:5000"
 export const API = {
-  LOGIN: `${DOMAIN}/login`,
   SIGNUP: `${DOMAIN}/signup`,
-  USERS: `${DOMAIN}/users`
+  LOGIN: `${DOMAIN}/login`,
+  USERS: `${DOMAIN}/users`,
+  FILEUPLOADER: `${DOMAIN}/fileUploader`
+
 };
 
 
