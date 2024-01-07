@@ -20,23 +20,19 @@ const Birthdays = () => {
   const sessionData = sessionStorage.getItem("loggedinUserData")
 
   const userData = sessionData?.length > 0 && JSON.parse(sessionData);
-  const isAdmin = userData?.username === "admin";
-  const username = "admin";
-
-
+  const userId = userData._id;
 
   const getFileList = async () => {
     const fileListResp = await axios.get(
-      `${API.USERS}/${username}`
+      `${API.USERS}/${userId}`
     );
     if (fileListResp) {
       setFileList(fileListResp.data);
-      // console.log(fileListResp.data);
+      console.log(fileListResp.data);
     }
     else {
       console.log("notttt")
     }
-
     // console.log(currentFileData);
   };
 
@@ -48,13 +44,12 @@ const Birthdays = () => {
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-
   };
 
   const fetchFileContent = async (fileId) => {
     try {
       const response = await axios.get(
-        `${API.FILEUPLOADER}/${username}/${fileId}`
+        `${API.USERS}/${userId}/${fileId}`
       );
       if (response?.data) {
         setcurrentFileData(response.data);
@@ -76,11 +71,11 @@ const Birthdays = () => {
           >
 
             <ListItemIcon>
-              {isAdmin && (<Link to="/fileUploader">
+              <Link to="/fileUploader">
                 <CloudUploadIcon className="icon " />
-              </Link>)}
+              </Link>
             </ListItemIcon>
-            {isAdmin && (<ListItemText primary="Upload New File" />)}
+            <Link to="fileUploader"><ListItemText primary="Upload New File" /></Link>
 
           </ListItem>
           <ListItem
@@ -109,7 +104,7 @@ const Birthdays = () => {
       {fileList?.length > 0 ? (
         <>
           <div className="filelist" style={{ overflowY: 'scroll', overflowX: 'hidden' }}>
-            <table class="table table-striped">
+            <table className="table table-striped">
               <thead>
                 <tr className="tablehead">
                   <th scope="col">No</th>

@@ -1,13 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import axios from "axios";
 import "react-tabs/style/react-tabs.css";
+import ReactModal from "react-modal";
 import "./tabs.css"
+
+const { API } = require("../config/" + process.env.NODE_ENV);
+
 
 
 const Tabspanel = ({ activeTab, excelData }) => {
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
   const [currentLimit, setCurrentLimit] = useState(7);
   const [upcomingBirthdays, setUpcomingBirthdays] = useState([]);
   const [upcomingAnniversary, setUpcomingAnniversary] = useState([]);
+  const [todaysBirthdays, setTodaysBirthdays] = useState([]);
+
+  const handleClick = (event, index) => {
+    setSelectedRow(index);
+    setShowModal(true);
+  };
+  const handleClick2 = (event, index) => {
+    setSelectedRow(index);
+    setShowModal2(true);
+  };
+
+
 
   const getUpcomingBirthdays = (birthDate, currentUptoLimit) => {
     const today = new Date();
@@ -36,6 +56,18 @@ const Tabspanel = ({ activeTab, excelData }) => {
 
     return joiningDateObj >= today && joiningDateObj <= uptoLimit;
   };
+  const getTodaysBirthdays = (birthDate) => {
+    const today = new Date();
+    const birthDateObj = new Date(birthDate);
+
+    birthDateObj.setFullYear(today.getFullYear()); // Set the birth year to the current year
+
+    return (
+      birthDateObj.getMonth() === today.getMonth() &&
+      birthDateObj.getDate() === today.getDate()
+    );
+  };
+
 
   useEffect(() => {
     if (excelData.length > 0) {
@@ -45,22 +77,38 @@ const Tabspanel = ({ activeTab, excelData }) => {
           : false;
       });
       setUpcomingBirthdays(birthdaysWithinLimit);
-      console.log("UpcomingBirthDays", birthdaysWithinLimit);
+      console.log("birthdayswithinlimit", birthdaysWithinLimit)
       const anniversaryWithtinLimit = excelData?.filter((person) => {
         return person?.length > 2
           ? getUpcomingAnniversary(person[2], currentLimit)
           : false;
       });
       setUpcomingAnniversary(anniversaryWithtinLimit);
-      console.log("upcomingAnniversary", anniversaryWithtinLimit);
+
+      const todayBirthdays = excelData?.filter((person) => {
+        return person?.length > 2 ? getTodaysBirthdays(person[1]) : false;
+      });
+      console.log("todayBirthdays", todayBirthdays)
+      setTodaysBirthdays(todayBirthdays); // Update "Today" tab data here
     }
   }, [currentLimit, excelData]);
+
 
   const handleTabChange = (currentTab) => {
     setCurrentLimit(currentTab);
   };
+  const sendBirthdayEmail = async (employeeEmail) => {
+    try {
+      const response = await axios.post(API.EMAIL, {
+        employeeEmail,
+      });
+      console.log(response.data.message); // Log the server's response message
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+  };
 
-  const renderPanel = () => {
+  const renderPanel = (data) => {
     return (
       <div>
         {activeTab === "Birthdays" && upcomingBirthdays.length > 0 && (
@@ -71,34 +119,102 @@ const Tabspanel = ({ activeTab, excelData }) => {
                 <tbody>
                   <tr>
                     <td className="px-4 py-1 column2">Employee Name</td>
-                    <td className="px-4 py-1 column2">Date of Birth</td>
-                    <td className="px-4 py-1 column2">favourite Colour</td>
-                    <td className="px-4 py-1 column2">favourite food</td>
+                    <td className="px-4 py-1 column2">
+                      {activeTab === "Birthdays" ? "Date of Birth" : "Date of Anniversary"}
+                    </td>
+                    {activeTab === "Birthdays" && (
+                      <td className="px-4 py-1 column2">Actions</td>
+                    )}
                   </tr>
                 </tbody>
               </table>
             </div>
-            {upcomingBirthdays.map((row, index) => (
+            {data.map((row, index) => (
               <div key={index}>
                 <table>
-                  <tbody>
-                    <tr>
-                      <td className="px-4 py-1 column1">{row[0]}</td>
-                      <td className="px-4 py-1 column1">{row[2]}</td>
-                      <td className="px-4 py-1 column1">{row[3]}</td>
-                      <td className="px-4 py-1 column1">{row[4]}</td>
-                    </tr>
-                  </tbody>
+                  <tr>
+                    <td className="px-4 py-1 column1">{row[0]}</td>
+                    <td className="px-4 py-1 column1">{row[1]}</td>
+                    {activeTab === "Birthdays" && (
+                      <td className="px-4 py-1 column1">
+                        {getTodaysBirthdays(row[1]) ? (
+                          <div className="d-flex">
+                            <button
+                              className="btn btn-secondary handleButton"
+                              onClick={() => sendBirthdayEmail(row[5])}
+                            >
+                              Send Birthday Email
+                            </button>
+                            <button
+                              className="btn btn-primary handleButton2"
+                              onClick={(event) => handleClick2(event, index)}
+                            >
+                              Show Info
+                            </button>
+                          </div>
+
+                        ) : (
+                          <button
+                            className="btn btn-primary"
+                            onClick={(event) => handleClick(event, index)}
+                          >
+                            Show Info
+                          </button>
+                        )}
+                      </td>
+                    )}
+                  </tr>
                 </table>
+
               </div>
             ))}
+
+            <ReactModal
+              isOpen={showModal}
+              onRequestClose={() => setShowModal(false)}
+              contentLabel="Additional Information"
+              className="customModal"
+              overlayClassName="customOverlay"
+            >
+              {selectedRow !== null && upcomingBirthdays[selectedRow] && (
+                <div>
+                  <h3>Additional Information</h3>
+                  <p>Employee Name: {upcomingBirthdays[selectedRow][0]}</p>
+                  <p>Date of Birth: {upcomingBirthdays[selectedRow][1]}</p>
+                  <p>Favourite Colour: {upcomingBirthdays[selectedRow][3]}</p>
+                  <p>Favourite Food: {upcomingBirthdays[selectedRow][4]}</p>
+                  <p>Employee Email: {upcomingBirthdays[selectedRow][5]}</p>
+                  <button className="closeButton" onClick={() => setShowModal(false)}>Close</button>
+                </div>
+              )}
+            </ReactModal>
+            <ReactModal
+              isOpen={showModal2}
+              onRequestClose={() => setShowModal2(false)}
+              contentLabel="Additional Information"
+              className="customModal"
+              overlayClassName="customOverlay"
+            >
+              {selectedRow !== null && todaysBirthdays[selectedRow] && (
+                <div>
+                  <h3>Additional Information</h3>
+                  <p>Employee Name: {todaysBirthdays[selectedRow][0]}</p>
+                  <p>Date of Birth: {todaysBirthdays[selectedRow][1]}</p>
+                  <p>Favourite Colour: {todaysBirthdays[selectedRow][3]}</p>
+                  <p>Favourite Food: {todaysBirthdays[selectedRow][4]}</p>
+                  <p>Employee Email: {todaysBirthdays[selectedRow][5]}</p>
+                  <button className="closeButton" onClick={() => setShowModal2(false)}>Close</button>
+                </div>
+              )}
+            </ReactModal>
+
+
           </div>
         )}
 
         {activeTab === "Anniversary" && upcomingAnniversary.length > 0 && (
           <div>
             <h3>Upcoming Work Anniversaries</h3>
-
             <div >
               <table>
                 <tbody>
@@ -133,18 +249,22 @@ const Tabspanel = ({ activeTab, excelData }) => {
     <div>
       <Tabs>
         <TabList className="tabss">
+          <Tab onClick={() => handleTabChange(1)}>Today</Tab>
           <Tab onClick={() => handleTabChange(7)}>Upto 7 Days</Tab>
           <Tab onClick={() => handleTabChange(14)}>Upto 14 Days</Tab>
           <Tab onClick={() => handleTabChange(30)}>Upto 1 Month</Tab>
         </TabList>
         <TabPanel>
-          {renderPanel()}
+          {renderPanel(todaysBirthdays)}
         </TabPanel>
         <TabPanel>
-          {renderPanel()}
+          {renderPanel(upcomingBirthdays)}
         </TabPanel>
         <TabPanel>
-          {renderPanel()}
+          {renderPanel(upcomingBirthdays)}
+        </TabPanel>
+        <TabPanel>
+          {renderPanel(upcomingBirthdays)}
         </TabPanel>
       </Tabs>
     </div>

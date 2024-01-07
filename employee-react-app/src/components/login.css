@@ -9,9 +9,7 @@ body {
 }
 
 .grayBackground {
-  /* background-color: #8c9ea7!important ; */
   background-image: url("../Media/background-uploader.jpg");
-  /* Replace "../path/to/background.jpg" with the actual path to your image */
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
