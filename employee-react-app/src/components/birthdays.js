@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "react-tabs/style/react-tabs.css";
+// eslint-disable-next-line react-hooks/exhaustive-deps
 import axios from "axios";
 import Tabspanel from "./tabs";
 import "react-tabs/style/react-tabs.css";
@@ -22,23 +23,36 @@ const Birthdays = () => {
   const userData = sessionData?.length > 0 && JSON.parse(sessionData);
   const userId = userData._id;
 
-  const getFileList = async () => {
-    const fileListResp = await axios.get(
-      `${API.USERS}/${userId}`
-    );
-    if (fileListResp) {
-      setFileList(fileListResp.data);
-      console.log(fileListResp.data);
-    }
-    else {
-      console.log("notttt")
-    }
-    // console.log(currentFileData);
-  };
+  // const getFileList = async () => {
+  //   const fileListResp = await axios.get(
+  //     `${API.USERS}/${userId}`
+  //   );
+  //   if (fileListResp) {
+  //     setFileList(fileListResp.data);
+  //     console.log(fileListResp.data);
+  //   }
+  //   else {
+  //     console.log("notttt")
+  //   }
+  //   // console.log(currentFileData);
+  // };
 
   useEffect(() => {
+    const getFileList = async () => {
+      const fileListResp = await axios.get(
+        `${API.USERS}/${userId}`
+      );
+      if (fileListResp) {
+        setFileList(fileListResp.data);
+        console.log(fileListResp.data);
+      }
+      else {
+        console.log("notttt")
+      }
+      // console.log(currentFileData);
+    };
     getFileList();
-  }, []);
+  }, [setFileList, userId]);
   // console.log(fileList);
 
 
