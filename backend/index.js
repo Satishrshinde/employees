@@ -5,6 +5,8 @@ const xlsx = require('xlsx');
 const fs = require('fs');
 const multer = require('multer')
 const User = require('./users');
+const nodemailer = require('nodemailer');
+
 
 const app = express();
 app.use(cors());
@@ -13,8 +15,8 @@ app.use(express.json());
 const url = 'mongodb+srv://satishrshinde2014:eu5RLFRxRCmaG7Pp@cluster0.204tdqa.mongodb.net/?retryWrites=true&w=majority'
 mongoose.connect(url, {
   useNewUrlParser: true, useUnifiedTopology: true
-
 })
+
   .then(() => {
     console.log("DB connected");
   })
@@ -35,11 +37,10 @@ app.get("/users", async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 });
-app.get("/users/:username", async (req, res) => {
+app.get("/users/:userId", async (req, res) => {
   try {
-    const { username } = req.params;
-    const user = await User.findOne({ username });
-
+    const { userId } = req.params;
+    const user = await User.findOne({ _id: userId });
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     } else {
@@ -136,18 +137,17 @@ function convertExcelDate(serialNumber) {
   return formattedDate;
 }
 
-app.get("/fileUploader/:userId/:fileId", (req, res) => {
+app.get("/users/:userId/:fileId", (req, res) => {
   const { userId, fileId } = req.params;
-
   // Assuming you have a User model imported
   User.findOne({ _id: userId })
     .then((user) => {
       if (!user) {
         throw new Error("User not found");
       }
-
       const file = user.files.find((file) => file._id.toString() === fileId);
       if (!file) {
+        console.log("error")
         throw new Error("File not found");
       }
       fs.readFile(file.path, (err, data) => {
@@ -156,11 +156,9 @@ app.get("/fileUploader/:userId/:fileId", (req, res) => {
           return res.status(500).send("Error reading file");
         }
 
-        const workbook = XLSX.read(data, { type: "buffer" });
-
+        const workbook = xlsx.read(data, { type: "buffer" });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-
         const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
 
         // Convert Excel date values to "yyyy-mm-dd" format
@@ -173,7 +171,6 @@ app.get("/fileUploader/:userId/:fileId", (req, res) => {
             }
           }
         }
-
         res.json(jsonData);
       });
     })
@@ -182,6 +179,43 @@ app.get("/fileUploader/:userId/:fileId", (req, res) => {
       res.status(404).send("File not found");
     });
 });
+const EMAIL_USER = process.env.EMAIL_USER || 'satishrshinde2014@gmail.com';
+const EMAIL_PASS = process.env.EMAIL_PASS || 'mrdgbwxqdlylfxjp';
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: EMAIL_USER,
+    pass: EMAIL_PASS
+  },
+});
+
+
+const sendBirthdayEmail = (recipientEmail) => {
+  const mailOptions = {
+    from: 'satishrshinde2014@gmail.com', // Your email address
+    to: recipientEmail,
+    subject: 'Happy Birthday!',
+    text: 'Happy birthday! We wish you all the best!',
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+    } else {
+      console.log('Email sent:', info.response);
+    }
+  });
+};
+app.post('/send-birthday-email', (req, res) => {
+  const { employeeEmail } = req.body;
+  if (employeeEmail && /\S+@\S+\.\S+/.test(employeeEmail)) {
+    sendBirthdayEmail(employeeEmail);
+    res.status(200).json({ message: 'Email sent successfully.' });
+  } else {
+    res.status(400).json({ error: 'Invalid email address.' });
+  }
+});
+
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log("server is running")
