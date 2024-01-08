@@ -1,10 +1,9 @@
-const DOMAIN = "http://localhost:5000"
 export const API = {
-  SIGNUP: `${DOMAIN}/signup`,
-  LOGIN: `${DOMAIN}/login`,
-  USERS: `${DOMAIN}/users`,
-  FILEUPLOADER: `${DOMAIN}/fileUploader`,
-  EMAIL: `${DOMAIN}/send-birthday-email`
+  SIGNUP: `/signup`,
+  LOGIN: `/login`,
+  USERS: `/users`,
+  FILEUPLOADER: `/fileUploader`,
+  EMAIL: `/send-birthday-email`
 
 };
 
