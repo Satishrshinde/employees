@@ -9,7 +9,7 @@ const nodemailer = require('nodemailer');
 
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "https://employees-employee-react-app.vercel.app/" }));
 app.use(express.json());
 
 const url = 'mongodb+srv://satishrshinde2014:eu5RLFRxRCmaG7Pp@cluster0.204tdqa.mongodb.net/?retryWrites=true&w=majority'
@@ -216,7 +216,7 @@ app.post('/send-birthday-email', (req, res) => {
   }
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log("server is running")
+  console.log(`Server is running on port ${PORT}`);
 });
