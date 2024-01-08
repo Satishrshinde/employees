@@ -5,7 +5,6 @@
     "backend"
   ],
   "scripts": {
-    "install": "npm install",
     "build": "npm run workspaces -- run build"
   }
 }
