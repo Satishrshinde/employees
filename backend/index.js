@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 // const xlsx = require('xlsx');
 // const fs = require('fs');
 // const multer = require('multer')
-// const User = require('./users');
+const User = require('./users');
 // const nodemailer = require('nodemailer');
 
 
@@ -30,29 +30,29 @@ app.get("/", (req, resp) => {
   resp.send("its working")
 });
 
- app.get("/users", async (req, res) => {
-   try {
-     const users = await User.find({});
-     res.send(users);
-   } catch (err) {
-     res.status(500).send({ message: err.message });
-   }
- });
- app.get("/users/:userId", async (req, res) => {
-   try {
-     const { userId } = req.params;
-     const user = await User.findOne({ _id: userId });
-     if (!user) {
-       return res.status(404).send({ message: "User not found" });
-     } else {
-       res.send(user.files);
-     }
-   } catch (err) {
-     console.log(err);
-   } finally {
-     console.log("COMPLETED");
-   }
- });
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
+app.get("/users/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    } else {
+      res.send(user.files);
+    }
+  } catch (err) {
+    console.log(err);
+  } finally {
+    console.log("COMPLETED");
+  }
+});
 
 app.post("/signup", async (req, res) => {
   console.log("signup")
@@ -191,31 +191,31 @@ app.post("/login", async (req, res) => {
 // });
 
 
-// const sendBirthdayEmail = (recipientEmail) => {
-//   const mailOptions = {
-//     from: 'satishrshinde2014@gmail.com', // Your email address
-//     to: recipientEmail,
-//     subject: 'Happy Birthday!',
-//     text: 'Happy birthday! We wish you all the best!',
-//   };
+const sendBirthdayEmail = (recipientEmail) => {
+  const mailOptions = {
+    from: 'satishrshinde2014@gmail.com', // Your email address
+    to: recipientEmail,
+    subject: 'Happy Birthday!',
+    text: 'Happy birthday! We wish you all the best!',
+  };
 
-//   transporter.sendMail(mailOptions, (error, info) => {
-//     if (error) {
-//       console.error('Error sending email:', error);
-//     } else {
-//       console.log('Email sent:', info.response);
-//     }
-//   });
-// };
-// app.post('/send-birthday-email', (req, res) => {
-//   const { employeeEmail } = req.body;
-//   if (employeeEmail && /\S+@\S+\.\S+/.test(employeeEmail)) {
-//     sendBirthdayEmail(employeeEmail);
-//     res.status(200).json({ message: 'Email sent successfully.' });
-//   } else {
-//     res.status(400).json({ error: 'Invalid email address.' });
-//   }
-// });
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+    } else {
+      console.log('Email sent:', info.response);
+    }
+  });
+};
+app.post('/send-birthday-email', (req, res) => {
+  const { employeeEmail } = req.body;
+  if (employeeEmail && /\S+@\S+\.\S+/.test(employeeEmail)) {
+    sendBirthdayEmail(employeeEmail);
+    res.status(200).json({ message: 'Email sent successfully.' });
+  } else {
+    res.status(400).json({ error: 'Invalid email address.' });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
