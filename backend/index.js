@@ -30,29 +30,29 @@ app.get("/", (req, resp) => {
   resp.send("its working")
 });
 
-// app.get("/users", async (req, res) => {
-//   try {
-//     const users = await User.find({});
-//     res.send(users);
-//   } catch (err) {
-//     res.status(500).send({ message: err.message });
-//   }
-// });
-// app.get("/users/:userId", async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-//     const user = await User.findOne({ _id: userId });
-//     if (!user) {
-//       return res.status(404).send({ message: "User not found" });
-//     } else {
-//       res.send(user.files);
-//     }
-//   } catch (err) {
-//     console.log(err);
-//   } finally {
-//     console.log("COMPLETED");
-//   }
-// });
+ app.get("/users", async (req, res) => {
+   try {
+     const users = await User.find({});
+     res.send(users);
+   } catch (err) {
+     res.status(500).send({ message: err.message });
+   }
+ });
+ app.get("/users/:userId", async (req, res) => {
+   try {
+     const { userId } = req.params;
+     const user = await User.findOne({ _id: userId });
+     if (!user) {
+       return res.status(404).send({ message: "User not found" });
+     } else {
+       res.send(user.files);
+     }
+   } catch (err) {
+     console.log(err);
+   } finally {
+     console.log("COMPLETED");
+   }
+ });
 
 // app.post("/signup", async (req, res) => {
 //   console.log("signup")
