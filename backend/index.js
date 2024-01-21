@@ -12,17 +12,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// const url = 'mongodb+srv://satishrshinde2014:eu5RLFRxRCmaG7Pp@cluster0.204tdqa.mongodb.net/?retryWrites=true&w=majority'
-// mongoose.connect(url, {
-//   useNewUrlParser: true, useUnifiedTopology: true
-// })
+const url = 'mongodb+srv://satishrshinde2014:eu5RLFRxRCmaG7Pp@cluster0.204tdqa.mongodb.net/?retryWrites=true&w=majority'
+mongoose.connect(url, {
+  useNewUrlParser: true, useUnifiedTopology: true
+})
 
-//   .then(() => {
-//     console.log("DB connected");
-//   })
-//   .catch((error) => {
-//     console.log("Error connecting to database:", error);
-//   });
+  .then(() => {
+    console.log("DB connected");
+  })
+  .catch((error) => {
+    console.log("Error connecting to database:", error);
+  });
 
 // const upload = multer({ dest: "uploads/" });
 
@@ -54,49 +54,49 @@ app.get("/", (req, resp) => {
    }
  });
 
-// app.post("/signup", async (req, res) => {
-//   console.log("signup")
-//   const { username, email, password } = req.body;
+app.post("/signup", async (req, res) => {
+  console.log("signup")
+  const { username, email, password } = req.body;
 
-//   try {
-//     const user = await User.findOne({
-//       email: email
-//     });
+  try {
+    const user = await User.findOne({
+      email: email
+    });
 
-//     if (user) {
-//       res.send({ message: "User already registered" });
-//     } else {
-//       const newSignUp = new User({
-//         username,
-//         email,
-//         password
-//       });
-//       await newSignUp.save();
-//       res.send({ message: "Signed up successfully" });
-//     }
-//   } catch (err) {
-//     res.status(500).send({ message: err.message });
-//   }
-// });
-// app.post("/login", async (req, res) => {
-//   const { username, password } = req.body;
+    if (user) {
+      res.send({ message: "User already registered" });
+    } else {
+      const newSignUp = new User({
+        username,
+        email,
+        password
+      });
+      await newSignUp.save();
+      res.send({ message: "Signed up successfully" });
+    }
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
 
-//   try {
-//     const user = await User.findOne({ username });
+  try {
+    const user = await User.findOne({ username });
 
-//     if (user) {
-//       if (password === user.password) {
-//         res.send({ message: "Login successful", user });
-//       } else {
-//         res.send({ message: "Password incorrect" });
-//       }
-//     } else {
-//       res.send({ message: "User not found" });
-//     }
-//   } catch (err) {
-//     res.send({ message: err.message });
-//   }
-// });
+    if (user) {
+      if (password === user.password) {
+        res.send({ message: "Login successful", user });
+      } else {
+        res.send({ message: "Password incorrect" });
+      }
+    } else {
+      res.send({ message: "User not found" });
+    }
+  } catch (err) {
+    res.send({ message: err.message });
+  }
+});
 
 // app.post("/fileUploader", upload.single("file"), async (req, res) => {
 //   // file content with user id
