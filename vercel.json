@@ -4,10 +4,6 @@
     {
       "src": "employee-react-app",
       "use": "@vercel/next"
-    },
-    {
-      "src": "backend",
-      "use": "@vercel/node"
     }
   ]
 }
