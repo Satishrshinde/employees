@@ -1,11 +1,8 @@
+const DOMAIN = "https://employees-qvia.onrender.com/"
 export const API = {
-  SIGNUP: `/signup`,
-  LOGIN: `/login`,
-  USERS: `/users`,
-  FILEUPLOADER: `/fileUploader`,
-  EMAIL: `/send-birthday-email`
-
+  SIGNUP: `${DOMAIN}/signup`,
+  LOGIN: `${DOMAIN}/login`,
+  USERS: `${DOMAIN}/users`,
+  FILEUPLOADER: `${DOMAIN}/fileUploader`,
+  EMAIL: `${DOMAIN}/send-birthday-email`
 };
-
-
-// const DOMAIN ="http://localhost:9002"

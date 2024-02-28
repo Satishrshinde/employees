@@ -1,16 +1,22 @@
 const express = require("express");
 const cors = require('cors');
 const mongoose = require('mongoose');
-const xlsx = require('xlsx');
-const fs = require('fs');
-const multer = require('multer')
+// const xlsx = require('xlsx');
+// const fs = require('fs');
+// const multer = require('multer')
 const User = require('./users');
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 
 
 const app = express();
-app.use(cors({ origin: "https://employees-employee-react-app.vercel.app/" }));
+app.use(cors());
 app.use(express.json());
+const corsOptions = {
+  origin: 'https://employee-app-frontend-ceqo92lx5-satishrshinde.vercel.app/',
+  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(cors(corsOptions));
 
 const url = 'mongodb+srv://satishrshinde2014:eu5RLFRxRCmaG7Pp@cluster0.204tdqa.mongodb.net/?retryWrites=true&w=majority'
 mongoose.connect(url, {
@@ -24,11 +30,12 @@ mongoose.connect(url, {
     console.log("Error connecting to database:", error);
   });
 
-const upload = multer({ dest: "uploads/" });
+// const upload = multer({ dest: "uploads/" });
 
 app.get("/", (req, resp) => {
   resp.send("its working")
 });
+
 app.get("/users", async (req, res) => {
   try {
     const users = await User.find({});
@@ -97,46 +104,49 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/fileUploader", upload.single("file"), async (req, res) => {
-  // file content with user id
-  // then file will be stored against that user
-  const file = req.file;
-  const userId = req.body.userId;
-  console.log("FILE", req.body);
-  const workbook = xlsx.readFile(file.path);
-  const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-  const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+// app.post("/fileUploader", upload.single("file"), async (req, res) => {
+//   // file content with user id
+//   // then file will be stored against that user
+//   const file = req.file;
+//   const userId = req.body.userId;
+//   console.log("FILE", req.body);
+//   const workbook = xlsx.readFile(file.path);
+//   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+//   const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
 
-  // Assuming your Excel has a header row, skip the first row (index 0)
-  const data = jsonData.slice(1);
+//   // Assuming your Excel has a header row, skip the first row (index 0)
+//   const data = jsonData.slice(1);
 
-  // Save the file information to the user in MongoDB
-  User.findByIdAndUpdate(
-    userId,
-    { $push: { files: { filename: file.originalname, path: file.path } } },
-    { new: true }
-  )
-    .then((updatedUser) => {
-      res
-        .status(200)
-        .json({ message: "File uploaded successfully!", user: updatedUser });
-    })
-    .catch((error) => {
-      res.status(500).json({ error: "Error saving data to the database." });
-    });
+// Save the file information to the user in MongoDB
+User.findByIdAndUpdate(
+  userId,
+  { $push: { files: { filename: file.originalname, path: file.path } } },
+  { new: true }
+)
+  .then((updatedUser) => {
+    // File uploaded and user updated successfully
+    res
+      .status(200)
+      .json({ message: "File uploaded successfully!", user: updatedUser });
+  })
+  .catch((error) => {
+    // Error occurred while saving the data
+    res.status(500).json({ error: "Error saving data to the database." });
+  });
 });
 
-function convertExcelDate(serialNumber) {
-  const date = new Date((serialNumber - 25569) * 86400 * 1000);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const formattedDate = `${year}-${month}-${day}`;
-  return formattedDate;
-}
+// function convertExcelDate(serialNumber) {
+//   const date = new Date((serialNumber - 25569) * 86400 * 1000);
+//   const year = date.getFullYear();
+//   const month = String(date.getMonth() + 1).padStart(2, "0");
+//   const day = String(date.getDate()).padStart(2, "0");
+//   const formattedDate = `${year}-${month}-${day}`;
+//   return formattedDate;
+// }
 
 app.get("/users/:userId/:fileId", (req, res) => {
   const { userId, fileId } = req.params;
+  // Assuming you have a User model imported
   User.findOne({ _id: userId })
     .then((user) => {
       if (!user) {
@@ -153,11 +163,12 @@ app.get("/users/:userId/:fileId", (req, res) => {
           return res.status(500).send("Error reading file");
         }
 
-        const workbook = xlsx.read(data, { type: "buffer" });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+        //         const workbook = xlsx.read(data, { type: "buffer" });
+        //         const sheetName = workbook.SheetNames[0];
+        //         const worksheet = workbook.Sheets[sheetName];
+        //         const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
 
+        // Convert Excel date values to "yyyy-mm-dd" format
         for (let i = 0; i < jsonData.length; i++) {
           const row = jsonData[i];
           for (let j = 0; j < row.length; j++) {
