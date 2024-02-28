@@ -117,13 +117,11 @@ app.post("/fileUploader", upload.single("file"), async (req, res) => {
     { new: true }
   )
     .then((updatedUser) => {
-      // File uploaded and user updated successfully
       res
         .status(200)
         .json({ message: "File uploaded successfully!", user: updatedUser });
     })
     .catch((error) => {
-      // Error occurred while saving the data
       res.status(500).json({ error: "Error saving data to the database." });
     });
 });
@@ -139,7 +137,6 @@ function convertExcelDate(serialNumber) {
 
 app.get("/users/:userId/:fileId", (req, res) => {
   const { userId, fileId } = req.params;
-  // Assuming you have a User model imported
   User.findOne({ _id: userId })
     .then((user) => {
       if (!user) {
@@ -161,7 +158,6 @@ app.get("/users/:userId/:fileId", (req, res) => {
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
 
-        // Convert Excel date values to "yyyy-mm-dd" format
         for (let i = 0; i < jsonData.length; i++) {
           const row = jsonData[i];
           for (let j = 0; j < row.length; j++) {
