@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 const corsOptions = {
-  origin: 'https://employee-app-frontend-ceqo92lx5-satishrshinde.vercel.app/',
+  origin: 'https://employees-employee-react-app.vercel.app',
   optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
