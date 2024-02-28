@@ -1,4 +1,4 @@
-const DOMAIN = "https://employees-qvia.onrender.com/"
+const DOMAIN = "https://employees-qvia.onrender.com"
 export const API = {
   SIGNUP: `${DOMAIN}/signup`,
   LOGIN: `${DOMAIN}/login`,
