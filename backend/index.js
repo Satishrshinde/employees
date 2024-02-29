@@ -145,7 +145,6 @@ function convertExcelDate(serialNumber) {
 
 app.get("/users/:userId/:fileId", (req, res) => {
   const { userId, fileId } = req.params;
-  // Assuming you have a User model imported
   User.findOne({ _id: userId })
     .then((user) => {
       if (!user) {

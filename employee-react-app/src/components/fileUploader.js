@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./FileUploader.css";
@@ -9,6 +9,7 @@ const FileUploader = () => {
   const sessionData = sessionStorage.getItem("loggedinUserData");
   console.log(sessionData);
   const userData = sessionData?.length > 0 && JSON.parse(sessionData);
+  const [uploadOption, setUploadOption] = useState(false);
   const fileRef = useRef();
   const navigate = useNavigate();
 
@@ -23,6 +24,7 @@ const FileUploader = () => {
       .then((res) => {
         console.log(res.data);
         console.log("file uploaded");
+        navigate("/birthdays")
       })
       .catch((error) => {
         console.error(error);
@@ -44,6 +46,7 @@ const FileUploader = () => {
 
               <button
                 className="btn btn-primary m-2 uploadsheet"
+                onClick={() => setUploadOption(true)}
               >
                 UPLOAD NEW SHEET
               </button>
@@ -56,11 +59,11 @@ const FileUploader = () => {
               </button>
             </div>
           </div>
-
-          <div className="file-uploader-container">
-            <h3 className="file-uploader-heading">UPLOAD A FILE</h3>
-            <input ref={fileRef} type="file" onChange={uploadNewFile} className="file-input" />
-          </div>
+          {uploadOption && (
+            <div className="file-uploader-container">
+              <h3 className="file-uploader-heading">UPLOAD A FILE</h3>
+              <input ref={fileRef} type="file" onChange={uploadNewFile} className="file-input" />
+            </div>)}
         </div>
       </div>
     </body>
