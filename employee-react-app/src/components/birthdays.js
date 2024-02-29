@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "react-tabs/style/react-tabs.css";
-// eslint-disable-next-line react-hooks/exhaustive-deps
 import axios from "axios";
 import Tabspanel from "./tabs";
 import "react-tabs/style/react-tabs.css";
@@ -81,16 +80,13 @@ const Birthdays = () => {
             button
             selected={activeTab === "Birthdays"}
             onClick={() => handleTabClick("Birthdays")}
-
           >
-
-            <ListItemIcon>
-              <Link to="/fileUploader">
+            <Link to="/fileUploader" className="d-flex">
+              <ListItemIcon>
                 <CloudUploadIcon className="icon " />
-              </Link>
-            </ListItemIcon>
-            <Link to="fileUploader"><ListItemText primary="Upload New File" /></Link>
-
+              </ListItemIcon>
+              <ListItemText primary="Upload New File" />
+            </Link>
           </ListItem>
           <ListItem
             button

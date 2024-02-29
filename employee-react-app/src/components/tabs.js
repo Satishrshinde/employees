@@ -58,6 +58,7 @@ const Tabspanel = ({ activeTab, excelData }) => {
   };
   const getTodaysBirthdays = (birthDate) => {
     const today = new Date();
+
     const birthDateObj = new Date(birthDate);
 
     birthDateObj.setFullYear(today.getFullYear()); // Set the birth year to the current year
@@ -72,7 +73,8 @@ const Tabspanel = ({ activeTab, excelData }) => {
   useEffect(() => {
     if (excelData.length > 0) {
       const birthdaysWithinLimit = excelData?.filter((person) => {
-        return person?.length > 2
+
+        return person?.length > 1
           ? getUpcomingBirthdays(person[1], currentLimit)
           : false;
       });
@@ -102,7 +104,7 @@ const Tabspanel = ({ activeTab, excelData }) => {
       const response = await axios.post(API.EMAIL, {
         employeeEmail,
       });
-      console.log(response.data.message); // Log the server's response message
+      console.log(response.data.message);
     } catch (error) {
       console.error('Error sending email:', error);
     }
@@ -111,7 +113,7 @@ const Tabspanel = ({ activeTab, excelData }) => {
   const renderPanel = (data) => {
     return (
       <div>
-        {activeTab === "Birthdays" && upcomingBirthdays.length > 0 && (
+        {activeTab === "Birthdays" && (
           <div>
             <h3>Upcoming Birthdays</h3>
             <div>
